@@ -1,0 +1,38 @@
+---
+# tasks file for bc.galera-cluster
+- name: Add an apt key to the keyserver
+  apt_key:
+      keyserver: hkp://keyserver.ubuntu.com:80
+      id: 0xF1656F24C74CD1D8
+
+- name: Add a repository
+  apt_repository:
+      repo: 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu xenial main'
+      state: present
+
+- name: Install mariadb-server and rsync
+  apt:
+      name: ['mariadb-server','rsync']
+      state: present
+
+- name: Configurate the Galera Cluster
+  template:
+      src: 'templates/my.cnf.j2'
+      dest: '/etc/mysql/my.cnf'
+      mode: 0644
+
+- name: Stop mariadb-service
+  service:
+      name: mysql
+      state: stopped
+
+- name: Generate a Galera Cluster
+  shell: galera_new_cluster
+  run_once: true
+
+- name: Start mariadb-server
+  service:
+      name: mysql
+      state: started
+
+#- name: mariadb user anlegen
