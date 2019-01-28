@@ -15,11 +15,13 @@
       name: ['mariadb-server','rsync']
       state: present
 
-- name: Configurate the Galera Cluster
+- name: Configurate Galera and MySQL
   template:
-      src: 'templates/my.cnf.j2'
-      dest: '/etc/mysql/my.cnf'
-      mode: 0644
+      src: '{{ item }}.j2'
+      dest: '/etc/{{ item }}'
+  with_items:
+    - 'mysql/my.cnf'
+    - 'mysql/conf.d/galera.cnf'
 
 - name: Stop mariadb-service
   service:
