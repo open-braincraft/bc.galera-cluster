@@ -15,5 +15,5 @@ wsrep_cluster_address="gcomm://{% for host in ansible_play_hosts %}{{ hostvars[h
 
 wsrep_sst_method=rsync
 
-wsrep_node_address="{{ galera_wsrep_node_address }}"
+wsrep_node_address="{{ ansible_host }}"
 wsrep_node_name="{{ ansible_hostname }}"

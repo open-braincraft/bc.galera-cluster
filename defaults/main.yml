@@ -6,13 +6,16 @@ galera_cluster_address: "{{ hostvars[inventory_hostname]['ansible_' + galera_clu
 galera_cluster_bind_interface: 'eth0'
 # Define the name of the cluster
 galera_cluster_name: 'galera_cluster'
-galera_ist_recv_addr: '{{ galera_cluster_bind_address }}'
+galera_cluster_address: '{{ ansible_host }}'
+galera_ist_recv_addr: '{{ galera_cluster_address }}'
 galera_ist_recv_addr_port: '{{ galera_wsrep_node_address_port|int + 1 }}'
-galera_ist_recv_bind: '{{ galera_cluster_bind_address }}'
+galera_ist_recv_bind: '{{ galera_cluster_address }}'
 
 #maxscale
 maxscale_user: 'maxscale'
-vault_maxscale_db_pw: 'admin'
+maxscale_root_pw: 'CHANGE_ME'
+
+mariadb_mysql_root_password: 'root'
 
 galera_node_group: 'galera_nodes'
 galera_mysql_master_node: "{{ groups['{{ galera_node_group }}'][0] }}"
@@ -20,7 +23,7 @@ galera_mysql_master_node: "{{ groups['{{ galera_node_group }}'][0] }}"
 # Defines if the cluster should be reconfigured
 galera_reconfigure_galera: false
 
-galera_wsrep_node_address: '{{ galera_cluster_bind_address }}:{{ galera_wsrep_node_address_port }}'
+galera_wsrep_node_address: '{{ galera_cluster_address }}:{{ galera_wsrep_node_address_port }}'
 
 galera_wsrep_node_address_port: 4567
 mariadb_mysql_mem_multiplier: .25
