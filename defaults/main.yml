@@ -14,7 +14,8 @@ galera_ist_recv_bind: '{{ galera_cluster_bind_address }}'
 maxscale_user: 'maxscale'
 vault_maxscale_db_pw: 'admin'
 
-galera_mysql_master_node: "{{ groups['all'][2] }}"
+galera_node_group: 'galera_nodes'
+galera_mysql_master_node: "{{ groups['{{ galera_node_group }}'][0] }}"
 
 # Defines if the cluster should be reconfigured
 galera_reconfigure_galera: false
