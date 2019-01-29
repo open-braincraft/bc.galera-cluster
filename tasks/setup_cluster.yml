@@ -1,0 +1,54 @@
+---
+# tasks file for bc.galera-cluster
+- name: Add an apt key to the keyserver
+  apt_key:
+      keyserver: hkp://keyserver.ubuntu.com:80
+      id: 0xF1656F24C74CD1D8
+
+- name: Add a repository
+  apt_repository:
+      repo: 'deb [arch=amd64,i386,ppc64el] http://nyc2.mirrors.digitalocean.com/mariadb/repo/10.2/ubuntu xenial main'
+      state: present
+
+- name: Install mariadb-server and rsync
+  apt:
+      name: ['mariadb-server','rsync']
+      state: present
+
+- name: setup_cluster | checking if galera cluster setup
+  stat:
+    path: "/etc/galera_cluster_configured"
+  register: "galera_cluster_configured"
+
+- name: Configurate Galera and MySQL
+  template:
+      src: '{{ item }}.j2'
+      dest: '/etc/{{ item }}'
+  with_items:
+    - 'mysql/my.cnf'
+    - 'mysql/conf.d/galera.cnf'
+
+- name: Stop mariadb-service
+  service:
+      name: mysql
+      state: stopped
+  when: not galera_cluster_configured.stat.exists
+
+- name: Generate a Galera Cluster
+  shell: galera_new_cluster
+  run_once: true
+  when: not galera_cluster_configured.stat.exists
+
+- name: Start mariadb-server
+  service:
+      name: mysql
+      state: started
+  when: not galera_cluster_configured.stat.exists
+
+- name: Create the maxscale user on the mysql database
+  mysql_user:
+    name: '{{ maxscale_user }}'
+    password: '{{ vault_maxscale_db_pw }}'
+    priv: '*.*:SHOW/mysql.db:SELECT/mysql.user:SELECT'
+    state: present
+  run_once: true

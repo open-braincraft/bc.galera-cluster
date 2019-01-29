@@ -1,5 +1,4 @@
-# template file to generate the config file for galera cluster
-# {{ ansible_managed }}
+#template file to generate the config file for galera cluster
 
 [client]
 port = 3306
@@ -11,7 +10,7 @@ socket = /var/run/mysqld/mysqld.sock
 
 [mysqld]
 basedir = /usr
-datadir→= {{ mariadb_mysql_settings['datadir'] }}
+datadir = {{ mariadb_mysql_settings['datadir'] }}
 expire_logs_days = {{ mariadb_mysql_settings['expire_logs_days'] }}
 key_buffer = {{ mariadb_mysql_settings['key_buffer_size'] }}
 lc-messages-dir = /usr/share/mysql
@@ -41,4 +40,3 @@ quote-names
 key_buffer = 16M
 
 !includedir /etc/mysql/conf.d/
-
